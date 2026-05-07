@@ -1,5 +1,5 @@
 # DIP-Installer
-Installer for the [Dreadnought Improvement Project (DIP)](github.com/brothermunro/Dreadnought-Improvement-Project), a mod for Ultimate Admiral: Dreadnoughts
+Installer for the [Dreadnought Improvement Project (DIP)](https://github.com/brothermunro/Dreadnought-Improvement-Project), a mod for Ultimate Admiral: Dreadnoughts
 
 ## Overview
 Provides a user friendly UI to aid with the installation of DIP. Also provides:
