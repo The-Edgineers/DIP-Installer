@@ -8,9 +8,6 @@ Provides a user friendly UI to aid with the installation of DIP. Also provides:
 - Backup & Restore
 - Uninstall (Only removes DIP, not MelonLoader or .NET Runtime 6.0)
 
-## Support
-We provide help should you encounter issues. You can contact us in [BrotherMunro's Discord](https://discord.gg/2F4eDfzd9). Once in there, seek help within the **dip-tech-support** channel
-
 ## Supported sources for DIP .zip archives
 https://www.nexusmods.com/ultimateadmiraldreadnoughts/mods/7?tab=files (*Currently the DIP-Installer only works properly with Nexus-based DIP archives*)
 
@@ -27,6 +24,15 @@ The DIP-Installer injects a version.txt into a DIP installation based on the arc
 3. Now in the DIP-Installer, select the location of your UAD folder
 4. In the DIP-Installer, once your UAD folder location has been set, press the "Backup" button. If you have multiple Mods folders, select the DIP installation inside the Mods folder you prepared in step 2
 5. You should now have a backup of your previous installation in a folder called "DIP-Backups/{name of your Mods folder}/{name of your DIP installation from the version.txt}", allowing you to install other DIP .zip archives or alternative installations if you are more experimental
+
+## Support
+We provide help should you encounter issues. You can contact us in [BrotherMunro's Discord](https://discord.gg/2F4eDfzd9). Once in there, seek help within the **dip-tech-support** channel
+
+## Contribution
+As this is an open source application, contribution is simple:
+- Make a fork of this repository's develop branch
+- Conduct change(s) on your fork repository
+- Once your repository is ready, conduct a merge request to this repository's develop branch
 
 ## TODO
 - Managing custom ship designs
