@@ -1,5 +1,5 @@
 # DIP-Installer
-Installer for the [Dreadnought Improvement Project (DIP)](https://github.com/brothermunro/Dreadnought-Improvement-Project), a mod for Ultimate Admiral: Dreadnoughts
+Installer for the [Dreadnought Improvement Project (DIP)](https://github.com/brothermunro/Dreadnought-Improvement-Project), a mod for [Ultimate Admiral: Dreadnoughts](https://store.steampowered.com/app/1069660/Ultimate_Admiral_Dreadnoughts/), a game made by [Game-Labs](https://en.wikipedia.org/wiki/Game-Labs), whom have [since December 27 2024](https://store.steampowered.com/news/app/1069660/view/515196931452962390) ceased further development of the game.
 
 ## Overview
 Provides a user friendly UI to aid with the installation of DIP. Also provides:
