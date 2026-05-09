@@ -1,4 +1,4 @@
-import pathlib
+from pathlib import Path
 import subprocess
 import threading
 import shutil
@@ -19,8 +19,8 @@ selected_output_label = None
 # =========================================================
 def get_base_path():
     if getattr(sys, "frozen", False):
-        return pathlib.Path(sys._MEIPASS)
-    return pathlib.Path(__file__).resolve().parent
+        return Path(sys._MEIPASS)
+    return Path(__file__).resolve().parent
 
 # =========================================================
 # UI HELPERS
@@ -57,23 +57,23 @@ def select_UAD_location(label):
     )
 
     if path:
-        selectedUADDir = str(pathlib.Path(path).resolve())
+        selectedUADDir = str(Path(path).resolve())
         label.config(text=selectedUADDir)
 
 
 def select_DIP_zip(label):
     global selectedDIPZip
 
-    downloads = pathlib.Path.home() / "Downloads"
+    downloads = Path.home() / "Downloads"
 
     path = filedialog.askopenfilename(
         title="Select DIP .zip archive",
         initialdir=downloads,
-        filetypes=[("ZIP files", "DIP*.zip")]
+        filetypes=[("ZIP files", "*DIP*.zip"),("ZIP files", "*dip*.zip")]
     )
 
     if path:
-        selectedDIPZip = str(pathlib.Path(path).resolve())
+        selectedDIPZip = str(Path(path).resolve())
         label.config(text=selectedDIPZip)
 
 
@@ -85,7 +85,7 @@ def verify_uad_dir() -> bool:
     if not selectedUADDir:
         return False
 
-    path = pathlib.Path(selectedUADDir).resolve()
+    path = Path(selectedUADDir).resolve()
     parts = tuple(p.lower() for p in path.parts)
     expected = ("steamapps", "common", "ultimate admiral dreadnoughts")
     return parts[-3:] == expected
@@ -93,19 +93,52 @@ def verify_uad_dir() -> bool:
 def verify_dip_zip():
     return (
         selectedDIPZip
-        and pathlib.Path(selectedDIPZip).suffix == ".zip"
-        and "dip" in pathlib.Path(selectedDIPZip).name.lower()
+        and Path(selectedDIPZip).suffix == ".zip"
+        and "dip" in Path(selectedDIPZip).name.lower()
     )
 
-def get_mods_path():
-    if not selectedUADDir:
-        return None
+def verify_melonloader_installation():
+    expectedFolder = Path(selectedUADDir) / "MelonLoader"
+    if expectedFolder.exists():
+        return True
+    return False
 
-    mods = pathlib.Path(selectedUADDir) / "Mods"
-    return mods if mods.exists() else None
+def get_mods_path(uninstall_entrybool=False,backing_up=False):
+    modsFolders = []
 
+    for object in Path(selectedUADDir).iterdir():
+        if object.is_dir() and object.name.lower().__contains__("mods"):
+            modFolderPath = str(Path(object).resolve())
+            modsFolders.append(modFolderPath)
 
-def find_existing_dip(mods_path: pathlib.Path):
+    if modsFolders.__len__() > 0 and modsFolders.__len__() < 2:
+        return Path(modsFolders[0]).resolve()
+    elif modsFolders.__len__() > 1:
+        if uninstall_entrybool:
+            title = "Select the Mods folder containing the DIP installation you wish to uninstall"
+        elif backing_up:
+            title = "Select the Mods folder containing the DIP installation you wish to backup"
+        else:
+            title = "Select the Mods folder where your wish to install the selected DIP archive into"
+        path = filedialog.askdirectory(
+        title=f"{title}",
+        initialdir=selectedUADDir,
+    )
+        if path and path.lower().__contains__("mods"):
+            return Path(path).resolve()
+        else:
+            update_output("Invalid Mods folder selected, please try again")
+            return False
+    else:
+        if not uninstall_entrybool:
+            modsFolderToCreate = Path(selectedUADDir) / "Mods"
+            modsFolderToCreate.mkdir(parents=True,exist_ok=True)
+            return Path(modsFolderToCreate).resolve()
+        else:
+            update_output("No mods folder found in your UAD directory")
+            return False
+
+def find_existing_dip(mods_path: Path):
     if not mods_path or not mods_path.exists():
         return None
 
@@ -119,16 +152,26 @@ def find_existing_dip(mods_path: pathlib.Path):
 # =========================================================
 # UNINSTALL
 # =========================================================
-def uninstall(output_label=None):
+def uninstall(output_label=None,mods_path=None):
+
+    existing = None
+
     if output_label is not None:
         set_output_label(output_label)
-    mods_path = get_mods_path()
-
-    if not mods_path:
-        update_output("Invalid UAD directory")
+    
+    if not selectedUADDir:
+        update_output("No valid UAD directory selected")
         return False
 
-    existing = find_existing_dip(mods_path)
+    if mods_path is None:
+        selected_mods_path = get_mods_path(uninstall_entrybool=True)
+        if selected_mods_path is not False:
+            mods_path = selected_mods_path
+            existing = find_existing_dip(selected_mods_path)
+        else:
+            return
+    else:
+        existing = find_existing_dip(mods_path)
 
     if not existing:
         update_output("No DIP installation found")
@@ -137,7 +180,7 @@ def uninstall(output_label=None):
     update_output(f"Uninstalling {existing}")
 
     shutil.rmtree(mods_path)
-    mods_path.mkdir(parents=True, exist_ok=True)
+    mods_path.mkdir(parents=True,exist_ok=True)
 
     update_output(f"{existing} uninstalled")
     return True
@@ -147,13 +190,13 @@ def uninstall(output_label=None):
 # DIP INSTALL
 # =========================================================
 def install_DIP():
+    zip_path = Path(selectedDIPZip)
+    update_output(f"Installing {zip_path.stem}")
     mods_path = get_mods_path()
 
-    if not mods_path:
-        update_output("Invalid Mods path")
+    if mods_path is False:
         return
 
-    zip_path = pathlib.Path(selectedDIPZip)
     existing = find_existing_dip(mods_path)
 
     def extract():
@@ -168,7 +211,7 @@ def install_DIP():
 
     def do_install():
         if existing:
-            uninstall()
+            uninstall(mods_path=mods_path)
         extract()
 
     if existing:
@@ -192,9 +235,8 @@ def install_DIP():
 # MELONLOADER
 # =========================================================
 def install_melonloader():
-    mods = get_mods_path()
 
-    if mods:
+    if verify_melonloader_installation():
         update_output("MelonLoader already installed")
         install_DIP()
         return
@@ -313,10 +355,12 @@ def backup(output_label=None):
     if output_label is not None:
         set_output_label(output_label)
 
-    mods = get_mods_path()
+    if not verify_uad_dir():
+        update_output("No valid UAD directory selected")
+        return
 
+    mods = get_mods_path(backing_up=True)
     if not mods:
-        update_output("Invalid UAD directory")
         return
 
     existing = find_existing_dip(mods)
@@ -325,18 +369,19 @@ def backup(output_label=None):
         update_output("No DIP installation found")
         return
 
-    backup_root = pathlib.Path(selectedUADDir) / "DIP-Backups" / existing
+    modsPathFolderName = tuple(mods.parts)
+    backup_root = Path(selectedUADDir) / "DIP-Backups" / modsPathFolderName[-1] / existing
 
     # -----------------------------
     # STOP if backup already exists
     # -----------------------------
     if backup_root.exists():
-        update_output(f"A backup of {existing} already exists")
+        update_output(f"A backup of {modsPathFolderName[-1]}/{existing} already exists")
         return
 
     backup_root.mkdir(parents=True)
 
-    update_output(f"Backing up {existing}")
+    update_output(f"Backing up {modsPathFolderName[-1]}/{existing}")
 
     for item in mods.iterdir():
         target = backup_root / item.name
@@ -347,86 +392,79 @@ def backup(output_label=None):
         elif item.is_dir():
             shutil.copytree(item, target)
 
-    update_output(f"{existing} backed up")
+    update_output(f"{modsPathFolderName[-1]}/{existing} backed up")
 
 
 # =========================================================
 # RESTORE SYSTEM
 # =========================================================
-def restoreBackup(backup_path, version):
-    mods = get_mods_path()
-
-    if not mods:
-        update_output("Invalid Mods path")
-        return
-
-    backup_path = pathlib.Path(backup_path)
-
-    update_output(f"Restoring {version}")
-
-    uninstall()
-
-    for item in backup_path.iterdir():
-        target = mods / item.name
-
-        if item.is_file():
-            shutil.copy2(item, target)
-        elif item.is_dir():
-            shutil.copytree(item, target, dirs_exist_ok=True)
-
-    update_output(f"{version} restored")
-
-
-def check_for_restore_folders():
-
-    if verify_uad_dir() is False:
-        update_output("Invalid UAD directory selected")
-        return
-
-    base = pathlib.Path(selectedUADDir)
-
-    backup_root = base / "DIP-Backups"
-
-    if backup_root.exists():
-        return backup_root
+def check_for_restore_folder():
+    if (Path(selectedUADDir)/"DIP-Backups").exists():
+        return True
     else:
-        update_output("No backups found")
-        return None
+        return False
 
+def restoreBackup(sourcePath,targetPath):
+    if targetPath.exists():
+        confirmation = messagebox.askyesno(
+            "Restore confirmation",
+            f"{targetPath} already exists.\n\n Do you wish to overwrite it?"
+        )
+        if confirmation:
+            shutil.rmtree(targetPath)
+            targetPath.mkdir(parents=True,exist_ok=True)
+
+            for item in sourcePath.iterdir():
+                target = targetPath / item.name
+
+                if item.is_file():
+                    shutil.copy2(item, target)
+                elif item.is_dir():
+                    shutil.copytree(item, target)
+            update_output("Restore completed")
+        else:
+            update_output("Restore cancelled")
+            return
+    else:
+        targetPath.mkdir(parents=True)
+        for item in sourcePath.iterdir():
+            target = targetPath / item.name
+
+            if item.is_file():
+                shutil.copy2(item, target)
+            elif item.is_dir():
+                shutil.copytree(item, target)
+        update_output("Restore completed")
+        return
 
 def restore(output_label=None):
     if output_label is not None:
         set_output_label(output_label)
 
-    folder = check_for_restore_folders()
-
-    if not folder:
+    if not verify_uad_dir():
+        update_output("No valid UAD directory selected")
+        return
+    
+    if check_for_restore_folder():
+        backupsFolder = Path(selectedUADDir)/"DIP-Backups"
+    else:
+        update_output("No DIP-Backups folder found. Make a backup first")
         return
 
-    selected = filedialog.askdirectory(
-        title="Select backup to restore",
-        initialdir=str(folder)
+    folderToRestore = filedialog.askdirectory(
+        title="Select DIP backup to restore",
+        initialdir=backupsFolder
     )
 
-    if selected:
-        mods = get_mods_path()
-        existing = find_existing_dip(mods)
-        if existing:
-            def ask():
-                result = messagebox.askyesno(
-                    "Existing Installation Detected",
-                    f"You currently have '{existing}' installed.\n\nOverwrite?"
-                )
-
-                if result:
-                    version = pathlib.Path(selected).name
-                    uninstall()
-                    restoreBackup(selected, version)
-                else:
-                    update_output("Installation cancelled")
-
-            selected_output_label.after(0, ask)
+    if folderToRestore:
+        restorePathFolderName = tuple(Path(folderToRestore).parts)
+        if restorePathFolderName[-1].lower().__contains__("dip") and "backups" not in restorePathFolderName[-1].lower():
+            restoreSource = Path(folderToRestore)
+            restoreDestination = Path(selectedUADDir) / restorePathFolderName[-2]
+            restoreBackup(restoreSource,restoreDestination)
         else:
-            version = pathlib.Path(selected).name
-            uninstall()
-            restoreBackup(selected, version)
+            update_output("No valid DIP backup selected")
+            return
+    else:
+        update_output("Restore procedure aborted")
+        return
