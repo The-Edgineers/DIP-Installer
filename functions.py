@@ -1,9 +1,11 @@
-from pathlib import Path
+import sys
+import shutil
 import subprocess
 import threading
-import shutil
 import zipfile
-import sys
+
+from pathlib import Path
+from datetime import datetime
 from tkinter import filedialog, messagebox
 
 
@@ -174,7 +176,7 @@ def uninstall(output_label=None,mods_path=None):
         existing = find_existing_dip(mods_path)
 
     if not existing:
-        update_output("No DIP installation found")
+        update_output("No DIP installation found (No contents / version.txt not found)")
         return False
 
     update_output(f"Uninstalling {existing}")
@@ -366,18 +368,19 @@ def backup(output_label=None):
     existing = find_existing_dip(mods)
 
     if not existing:
-        update_output("No DIP installation found")
+        update_output("No DIP installation found (No contents / version.txt not found)")
         return
 
     modsPathFolderName = tuple(mods.parts)
-    backup_root = Path(selectedUADDir) / "DIP-Backups" / modsPathFolderName[-1] / existing
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    backup_name = f"{existing}_{timestamp}"
 
-    # -----------------------------
-    # STOP if backup already exists
-    # -----------------------------
-    if backup_root.exists():
-        update_output(f"A backup of {modsPathFolderName[-1]}/{existing} already exists")
-        return
+    backup_root = (
+        Path(selectedUADDir)
+        / "DIP-Backups"
+        / modsPathFolderName[-1]
+        / backup_name
+    )
 
     backup_root.mkdir(parents=True)
 
@@ -392,7 +395,7 @@ def backup(output_label=None):
         elif item.is_dir():
             shutil.copytree(item, target)
 
-    update_output(f"{modsPathFolderName[-1]}/{existing} backed up")
+    update_output(f"Backup created: {modsPathFolderName[-1]}/{backup_name}")
 
 
 # =========================================================
