@@ -5,6 +5,7 @@ import threading
 import zipfile
 
 from pathlib import Path
+from pathlib import PurePosixPath
 from datetime import datetime
 from tkinter import filedialog, messagebox
 
@@ -14,6 +15,7 @@ from tkinter import filedialog, messagebox
 # =========================================================
 selectedUADDir = ""
 selectedDIPZip = ""
+selectedDIPRoot = None
 selected_output_label = None
 
 # =========================================================
@@ -93,11 +95,24 @@ def verify_uad_dir() -> bool:
     return parts[-3:] == expected
 
 def verify_dip_zip():
-    return (
-        selectedDIPZip
-        and Path(selectedDIPZip).suffix == ".zip"
-        and "dip" in Path(selectedDIPZip).name.lower()
-    )
+    global selectedDIPRoot
+
+    if selectedDIPZip != "":
+        zip_path = Path(selectedDIPZip)
+
+        if zip_path.suffix == ".zip" and "dip" in Path(selectedDIPZip).name.lower():
+            with zipfile.ZipFile(zip_path, "r") as dipZip:
+                
+                for item in dipZip.namelist():
+                    if item.endswith("TweaksAndFixes.dll"):
+
+                        parent = PurePosixPath(item).parent
+                        if str(parent) != ".":
+                            selectedDIPRoot = str(parent)
+                        else:
+                            selectedDIPRoot = ""
+                        return True
+    return False
 
 def verify_melonloader_installation():
     expectedFolder = Path(selectedUADDir) / "MelonLoader"
@@ -202,10 +217,27 @@ def install_DIP():
     existing = find_existing_dip(mods_path)
 
     def extract():
+        global selectedDIPRoot
         update_output(f"Extracting {zip_path.name}")
 
         with zipfile.ZipFile(zip_path, "r") as z:
-            z.extractall(mods_path)
+            if selectedDIPRoot:
+                for member in z.infolist():
+                    if member.filename.startswith(selectedDIPRoot + "/"):
+                        relative = PurePosixPath(member.filename).relative_to(selectedDIPRoot)
+                        if str(relative) == ".":
+                            continue
+                        target = mods_path / relative
+
+                        if member.is_dir():
+                            target.mkdir(parents=True, exist_ok=True)
+                        else:
+                            target.parent.mkdir(parents=True, exist_ok=True)
+                            with z.open(member) as src, open(target, "wb") as dst:
+                                shutil.copyfileobj(src, dst)                
+            else:
+                z.extractall(mods_path)
+
 
         (mods_path / "version.txt").write_text(zip_path.stem)
 
