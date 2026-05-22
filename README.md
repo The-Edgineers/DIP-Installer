@@ -9,24 +9,21 @@ Provides a user friendly UI to aid with the installation of DIP. Also provides:
 - Uninstall (Only removes DIP, not MelonLoader or .NET Runtime 6.0)
 
 ## Supported sources for DIP .zip archives
-https://www.nexusmods.com/ultimateadmiraldreadnoughts/mods/7?tab=files (*Currently the DIP-Installer only works properly with Nexus-based DIP archives*)
+https://www.nexusmods.com/ultimateadmiraldreadnoughts/mods/7?tab=files **(RECOMMENDED)**  
+https://github.com/brothermunro/Dreadnought-Improvement-Project/releases
 
 ## Instructions
 1. Ensure you have Ultimate Admiral Dreadnoughts installed through Steam
-2. Download your desired DIP .zip archive(s). Put them in your user's Downloads folder
-3. Download the latest DIP-Installer release (.exe for Windows, .Linux for Linux)
-
-## IMPORTANT NOTICE REGARDING OLD INSTALLATIONS / NON DIP-INSTALLER INSTALLATIONS
-The DIP-Installer injects a version.txt into a DIP installation based on the archive name (useful for debugging etc). However, installations not conducted by the DIP-Installer don't have this. In order to make your old installation compatible with DIP-Installer you need to perform some manual actions, see the steps below:
-
-1. In your UAD folder, go into (one of) your Mods folder(s)
-2. In that folder, add a file "version.txt" and inside of that file, on line 1, add some simple recogniseable text (i.e. "DIP-Extended-dd-mm-yyyy")
-3. Now in the DIP-Installer, select the location of your UAD folder
-4. In the DIP-Installer, once your UAD folder location has been set, press the "Backup" button. If you have multiple Mods folders, select the DIP installation inside the Mods folder you prepared in step 2
-5. You should now have a backup of your previous installation in a folder called "DIP-Backups/{name of your Mods folder}/{name of your DIP installation from the version.txt}", allowing you to install other DIP .zip archives or alternative installations if you are more experimental
+2. Download your desired DIP .zip archive(s). Put them in your user's Downloads folder **(NEXUS DIP RELEASES CONTAIN THESE FOR YOU)**
+3. Download the latest GitHub release of DIP-Installer, the .exe for Windows or .Linux for Linux **(NEXUS DIP RELEASES CONTAIN THE INSTALLER FOR YOU)**
+4. Run the executable
+5. Select the location of your UAD directory (../steamapps/common/Ultimate Admiral Dreadnoughts)
+6. Select the DIP .zip to install (The one from step 2 - If you have Nexus DIP releases, you can use the .zips within the folder you extracted)
+7. Hit the "Install" button
+8. Now in Steam you can press PLAY and you should be able to enjoy your installed DIP version
 
 ## Support
-We provide help should you encounter issues. You can contact us in [BrotherMunro's Discord](https://discord.gg/2F4eDfzd9). Once in there, seek help within the **dip-tech-support** channel
+We provide help should you encounter issues. You can contact us in [BrotherMunro's Discord](https://discord.gg/2F4eDfzd9). Once in there, seek help within the **dip-tech-support** channel, specifically, the **DIP-Installer Support Thread**
 
 ## Contribution
 As this is an open source application, contribution is simple:
@@ -36,5 +33,13 @@ As this is an open source application, contribution is simple:
 
 ## TODO
 - Managing custom ship designs
-- Support for non-Nexus DIP archives
 - Support for submods
+
+## IMPORTANT NOTICE REGARDING OLD INSTALLATIONS / NON DIP-INSTALLER INSTALLATIONS
+The DIP-Installer injects a version.txt into a DIP installation based on the archive name (useful for debugging etc). However, installations not conducted by the DIP-Installer don't have this. In order to make your old installation compatible with DIP-Installer you need to perform some manual actions, see the steps below:
+
+1. In your UAD folder, go into (one of) your Mods folder(s)
+2. In that folder, add a file "version.txt" and inside of that file, on line 1, add some simple recogniseable text (i.e. "DIP-Extended-dd-mm-yyyy")
+3. Now in the DIP-Installer, select the location of your UAD folder
+4. In the DIP-Installer, once your UAD folder location has been set, press the "Backup" button. If you have multiple Mods folders, select the DIP installation inside the Mods folder you prepared in step 2
+5. You should now have a backup of your previous installation in a folder called "DIP-Backups/{name of your Mods folder}/{name of your DIP installation from the version.txt}", allowing you to install other DIP .zip archives or alternative installations if you are more experimental
