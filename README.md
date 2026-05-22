@@ -9,7 +9,7 @@ Provides a user friendly UI to aid with the installation of DIP. Also provides:
 - Uninstall (Only removes DIP, not MelonLoader or .NET Runtime 6.0)
 
 ## Supported sources for DIP .zip archives
-https://www.nexusmods.com/ultimateadmiraldreadnoughts/mods/7?tab=files **(RECOMMENDED)**
+https://www.nexusmods.com/ultimateadmiraldreadnoughts/mods/7?tab=files **(RECOMMENDED)**  
 https://github.com/brothermunro/Dreadnought-Improvement-Project/releases
 
 ## Instructions
