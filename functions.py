@@ -372,7 +372,7 @@ def install(output_label=None):
         set_output_label(output_label)
 
     if get_OS() is None:
-        update_output("Your operating system is not supported (Supports Linux & Windows only")
+        update_output("Your operating system is not supported (Linux & Windows only)")
         return
 
     if not verify_uad_dir():
