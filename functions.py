@@ -73,7 +73,7 @@ def select_DIP_zip(label):
     path = filedialog.askopenfilename(
         title="Select DIP .zip archive",
         initialdir=downloads,
-        filetypes=[("ZIP files", "*DIP*.zip"),("ZIP files", "*dip*.zip")]
+        filetypes=[("ZIP files", "*.zip")]
     )
 
     if path:
@@ -100,7 +100,7 @@ def verify_dip_zip():
     if selectedDIPZip != "":
         zip_path = Path(selectedDIPZip)
 
-        if zip_path.suffix == ".zip" and "dip" in Path(selectedDIPZip).name.lower():
+        if zip_path.suffix == ".zip":
             with zipfile.ZipFile(zip_path, "r") as dipZip:
                 
                 for item in dipZip.namelist():
@@ -370,6 +370,10 @@ def install_dotnet6():
 def install(output_label=None):
     if output_label is not None:
         set_output_label(output_label)
+
+    if get_OS() is None:
+        update_output("Your operating system is not supported (Supports Linux & Windows only")
+        return
 
     if not verify_uad_dir():
         update_output("No valid UAD directory selected")
