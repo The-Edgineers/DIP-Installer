@@ -87,7 +87,7 @@ class MainWindow(tk.Tk):
 
 # Main
 def render():
-    app = MainWindow("Version 1.1.0")
+    app = MainWindow(functions.get_version())
     appIconPath = functions.get_base_path() / "assets" / "DIP_Installer_Icon.png"
     appIcon = tk.PhotoImage(file=appIconPath)
     app.iconphoto(True, appIcon)

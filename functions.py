@@ -39,6 +39,9 @@ def update_output(text):
             0,lambda: selected_output_label.config(text=text)
         )
 
+def get_version():
+    return "Version 2.0.0"
+
 # =========================================================
 # OS DETECTION
 # =========================================================
@@ -241,7 +244,8 @@ def install_DIP():
 
         (mods_path / "version.txt").write_text(zip_path.stem)
 
-        update_output(f"{zip_path.stem} installed")
+        update_output("")
+        messagebox.showinfo(title=f"DIP-Installer {get_version()}",message=f"{zip_path.stem} has been installed")
 
     def do_install():
         if existing:
@@ -258,7 +262,8 @@ def install_DIP():
             if result:
                 selected_output_label.after(0, do_install)
             else:
-                update_output("Installation cancelled")
+                update_output("")
+                messagebox.showwarning(title=f"DIP-Installer {get_version()}",message=f"{zip_path.stem} has been installed")
 
         selected_output_label.after(0, ask)
     else:
@@ -277,39 +282,29 @@ def install_melonloader():
 
     update_output("Installing MelonLoader")
 
-    base = get_base_path() / "installers"
-
-    if get_OS() == "Linux":
-        script = base / "MelonLoader.Installer.Linux"
-        script.chmod(0o755)
-    else:
-        script = base / "MelonLoader.Installer.exe"
-
-    cmd = [str(script)]
+    melonZIP = get_base_path() / "assets" / "MelonLoader.x64.zip"
 
     def worker():
+        global selectedUADDir
+        UADDir = Path(selectedUADDir).resolve()
         try:
-            process = subprocess.Popen(
-                cmd,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT,
-                text=True
-            )
+            # Extract MelonLoader
+            with zipfile.ZipFile(melonZIP, "r") as zip_ref:
+                zip_ref.extractall(UADDir)
 
-            process.wait()
-            success = process.returncode == 0
+            # Deploy Mods folder
+            (UADDir / "Mods").mkdir(exist_ok=True)
 
             def next_step():
-                if success:
                     update_output("MelonLoader installed")
                     install_DIP()
-                else:
-                    update_output("MelonLoader installation failed")
 
             selected_output_label.after(0, next_step)
+
         except Exception as e:
-            update_output(f"MelonLoader installation error: {e}")
-            return
+            def error_step():
+                update_output(f"MelonLoader installation error: {e}")
+                return
 
     threading.Thread(target=worker, daemon=True).start()
 
@@ -320,21 +315,20 @@ def install_melonloader():
 def install_dotnet6():
     update_output("Installing .NET 6.0")
 
-    base = get_base_path() / "installers"
-
     if get_OS() == "Linux":
-        script = base / "dotnet-install.sh"
-        script.chmod(0o755)
-        cmd = ["bash", str(script), "--runtime", "dotnet", "--channel", "6.0"]
+        cmd = [
+            "protontricks",
+            "1069660",
+            "dotnetdesktop6"
+        ]
 
     else:
-        script = base / "dotnet-install.ps1"
         cmd = [
-            "powershell.exe",
-            "-ExecutionPolicy", "Bypass",
-            "-File", str(script),
-            "-Runtime", "dotnet",
-            "-Channel", "6.0"
+            "winget",
+            "install",
+            "Microsoft .NET Windows Desktop Runtime 6.0",
+            "--source",
+            "winget"
         ]
 
     def worker():
@@ -357,6 +351,7 @@ def install_dotnet6():
                     update_output(".NET 6 failed")
 
             selected_output_label.after(0, next_step)
+
         except Exception as e:
             update_output(f".NET 6 installation error: {e}")
             return
