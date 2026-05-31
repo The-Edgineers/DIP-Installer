@@ -312,15 +312,28 @@ def install_melonloader():
 # =========================================================
 # DOTNET 6
 # =========================================================
+def resolve_protontricks():
+    protontricks = shutil.which("protontricks")
+    if protontricks:
+        return [protontricks]
+    elif shutil.which("flatpak"):
+        return ["flatpak", "run", "com.github.Matoking.protontricks"]
+    else:
+        return None
+
+def get_protontricks_command(appid: str, runtime: str):
+    base = resolve_protontricks()
+    if not base:
+        update_output(".NET 6.0 install error: Unable to find protontricks")
+        return None
+    else:
+        return base + [appid, runtime]
+
 def install_dotnet6():
     update_output("Installing .NET 6.0")
 
     if get_OS() == "Linux":
-        cmd = [
-            "protontricks",
-            "1069660",
-            "dotnetdesktop6"
-        ]
+        cmd = get_protontricks_command("1069660", "dotnetdesktop6")
 
     else:
         cmd = [
