@@ -340,8 +340,16 @@ def install_dotnet6():
                 text=True
             )
 
-            process.wait()
+            output, _ = process.communicate()
             success = process.returncode == 0
+
+            if not success:
+                text = output.lower()
+                if ("already installed" in text 
+                    or "installed package is already present" in text 
+                    or "no available upgrade found" in text
+                ):
+                    success = True
 
             def next_step():
                 if success:
