@@ -3,24 +3,47 @@ Installer for the [Dreadnought Improvement Project (DIP)](https://github.com/bro
 
 ## Overview
 Provides a user friendly UI to aid with the installation of DIP. Also provides:
-- Microsoft .NET Runtime 6.0 (Linux and Windows scripts from Microsoft - They will complete very quickly if you already have this)
-- MelonLoader Installer (Linux and Windows (v0.6.6), If you already have MelonLoader set up with UAD, DIP-Installer will skip this)
+- Microsoft .NET Desktop Runtime 6.0 installer
+- MelonLoader deployment (Linux and Windows (v0.6.6), If you already have MelonLoader set up with UAD, DIP-Installer will skip this)
 - Backup & Restore
-- Uninstall (Only removes DIP, not MelonLoader or .NET Runtime 6.0)
+- Uninstall (Only removes DIP, not MelonLoader or .NET Desktop Runtime 6.0)
 
 ## Supported sources for DIP .zip archives
 https://www.nexusmods.com/ultimateadmiraldreadnoughts/mods/7?tab=files **(RECOMMENDED)**  
 https://github.com/brothermunro/Dreadnought-Improvement-Project/releases
 
-## Instructions
-1. Ensure you have Ultimate Admiral Dreadnoughts installed through Steam
-2. Download your desired DIP .zip archive(s). Put them in your user's Downloads folder **(NEXUS DIP RELEASES CONTAIN THESE FOR YOU)**
-3. Download the latest GitHub release of DIP-Installer, the .exe for Windows or .Linux for Linux **(NEXUS DIP RELEASES CONTAIN THE INSTALLER FOR YOU)**
-4. Run the executable
-5. Select the location of your UAD directory (../steamapps/common/Ultimate Admiral Dreadnoughts)
-6. Select the DIP .zip to install (The one from step 2 - If you have Nexus DIP releases, you can use the .zips within the folder you extracted)
-7. Hit the "Install" button
-8. Now in Steam you can press PLAY and you should be able to enjoy your installed DIP version
+## Installation Walkthrough
+### Windows
+#### Prequisite manual actions
+1. None
+
+#### Usage
+1. Double click on `DIP-Installer.exe`
+2. Click on `Select UAD Folder` and browse to select your UAD folder. This is commonly `../steamapps/common/Ultimate Admiral Dreadnoughts`
+3. Click on `Select DIP .zip`. Select the desired .zip you wish to install. For example, using the Nexus all-in-one archive, you could select `DIP Extended 1.3.4.zip`
+4. Press `Install`
+5. Go through the .NET 6.0 Desktop Runtime installer (You may first see a shell, do not close it, just wait for the Windows application to load up)
+6. Wait until MelonLoader installation finishes
+7. Wait until you receive a popup that says your DIP .zip from step 3 is installed
+8. Launch UAD & Enjoy DIP
+
+### Linux
+#### Prequisite manual actions
+1. Having Protontricks installed. We recommend installing it [through Flatpak (also do the shell alias section)](https://github.com/Matoking/protontricks#flatpak-recommended)
+2. In Steam, go to Ultimate Admiral Dreadnoughts. Right click > Properties > Launch Options > insert the following: `WINEDLLOVERRIDES="version=n,b" %command%`
+3. Before running the installer, you **MUST** either set your global Steam compatibility setting to use a Proton version or specifically set UAD's compatibility setting to use one (**tested to work with Proton Experimental**). Also be sure that you have launched the game at least once prior to running this application
+
+**WARNING: DIP-Installer has only been tested with Flatpak-based Protontricks**. You are free to install Protontricks differently, the important part is that `protontricks` is a viable command inside your terminal/CLI
+
+#### Usage
+1. Double click `DIP_Installer-x86_64.AppImage`
+2. Click on `Select UAD Folder` and browse to select your UAD folder. This is commonly `../steamapps/common/Ultimate Admiral Dreadnoughts`
+3. Click on `Select DIP .zip`. Select the desired .zip you wish to install. For example, using the Nexus all-in-one archive, you could select `DIP Extended 1.3.4.zip`
+4. Press `Install`
+5. Go through the .NET 6.0 Desktop Runtime installer (It will pop up 2 times. Go through it both times.)
+6. Wait until MelonLoader installation finishes
+7. Wait until you receive a popup that says your DIP .zip from step 3 is installed
+8. Launch UAD & Enjoy DIP
 
 ## Support
 We provide help should you encounter issues. You can contact us in [BrotherMunro's Discord](https://discord.gg/2F4eDfzd9). Once in there, seek help within the **dip-tech-support** channel, specifically, the **DIP-Installer Support Thread**
@@ -35,11 +58,28 @@ As this is an open source application, contribution is simple:
 - Managing custom ship designs
 - Support for submods
 
-## IMPORTANT NOTICE REGARDING OLD INSTALLATIONS / NON DIP-INSTALLER INSTALLATIONS
+## Notices
+### Old Installations
 The DIP-Installer injects a version.txt into a DIP installation based on the archive name (useful for debugging etc). However, installations not conducted by the DIP-Installer don't have this. In order to make your old installation compatible with DIP-Installer you need to perform some manual actions, see the steps below:
 
 1. In your UAD folder, go into (one of) your Mods folder(s)
-2. In that folder, add a file "version.txt" and inside of that file, on line 1, add some simple recogniseable text (i.e. "DIP-Extended-dd-mm-yyyy")
+2. In that folder, add a file "version.txt" and inside of that file, on line 1, add some simple recogniseable text (i.e. "DIP-Extended-1.3.4-dd-mm-yyyy")
 3. Now in the DIP-Installer, select the location of your UAD folder
 4. In the DIP-Installer, once your UAD folder location has been set, press the "Backup" button. If you have multiple Mods folders, select the DIP installation inside the Mods folder you prepared in step 2
 5. You should now have a backup of your previous installation in a folder called "DIP-Backups/{name of your Mods folder}/{name of your DIP installation from the version.txt}", allowing you to install other DIP .zip archives or alternative installations if you are more experimental
+
+### Too-high-version of MelonLoader installed
+DIP is designed exclusively around MelonLoader version 0.6.6. To rule out (one) source of issues, make sure you run DIP with MelonLoader v0.6.6  
+
+In order to downgrade, should you have a higher version, follow the guide below depending on what you used prior:
+
+#### You used DIP-Installer (v1.0.0 to v1.1.0)
+1. Go to your UAD folder and select your MelonLoader folder. Delete that folder.
+2. Run DIP-Installer.exe / DIP_Installer-x86_64.AppImage (See the `Installation Walkthrough` section for your platform)
+
+#### You used the MelonLoader Installer .exe / .Linux graphical installation tool
+1. Download `MelonLoader.Installer.exe` (Windows) or `MelonLoader.Installer.Linux` (Linux) [(0.6.6 MelonLoader release page)](https://github.com/LavaGang/MelonLoader/releases/tag/v0.6.6)
+2. Run the downloaded tool
+3. Inside this tool, select UAD
+4. Now you'll see a dropdown version menu. Make sure that says `0.6.6`
+5. Hit (re)install. Done
