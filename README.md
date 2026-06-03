@@ -47,7 +47,7 @@ https://github.com/brothermunro/Dreadnought-Improvement-Project/releases
 8. Launch UAD & Enjoy DIP
 
 ## Support
-We provide help should you encounter issues. You can contact us in [BrotherMunro's Discord](https://discord.gg/2F4eDfzd9). Once in there, seek help within the **dip-tech-support** channel, specifically, the **DIP-Installer Support Thread**
+We provide help should you encounter issues. You can contact us in [BrotherMunro's Discord](https://discord.gg/UNMuAPUWfZ). Once in there, seek help within the **dip-tech-support** channel, specifically, the **DIP-Installer Support Thread**
 
 ## Contribution
 As this is an open source application, contribution is simple:
