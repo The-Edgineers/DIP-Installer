@@ -40,7 +40,7 @@ def update_output(text):
         )
 
 def get_version():
-    return "Version 2.0.0"
+    return "Version 2.0.1"
 
 # =========================================================
 # OS DETECTION
@@ -329,25 +329,47 @@ def get_protontricks_command(appid: str, runtime: str):
     else:
         return base + [appid, runtime]
 
+def resolve_dotnet6_installation():
+    cmd = [
+        "winget",
+        "list",
+        "--id",
+        "Microsoft.DotNet.DesktopRuntime.6"
+    ]
+
+    process = subprocess.run(
+        cmd,
+        capture_output=True,
+        text=True
+    )
+
+    if "Microsoft.DotNet.DesktopRuntime.6" in process.stdout:
+        return True
+    return False
+
 def install_dotnet6():
     update_output("Installing .NET 6.0")
-
-    if get_OS() == "Linux":
-        cmd = get_protontricks_command("1069660", "dotnetdesktop6")
-
-    else:
-        cmd = [
-            "winget",
-            "install",
-            "Microsoft .NET Windows Desktop Runtime 6.0",
-            "--source",
-            "winget"
-        ]
-
     def worker():
+        if get_OS() == "Linux":
+            end_cmd = get_protontricks_command("1069660", "dotnetdesktop6")
+        else:
+            dotnet6installed = resolve_dotnet6_installation()
+            if not dotnet6installed:
+                end_cmd = [
+                    "winget",
+                    "install",
+                    "--id",
+                    "Microsoft.DotNet.DesktopRuntime.6",
+                    "--exact",
+                    "--source",
+                    "winget"
+                ]
+            else:
+                install_melonloader()
+                return
         try:
             process = subprocess.Popen(
-                cmd,
+                end_cmd,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT,
                 text=True
@@ -356,20 +378,12 @@ def install_dotnet6():
             output, _ = process.communicate()
             success = process.returncode == 0
 
-            if not success:
-                text = output.lower()
-                if ("already installed" in text 
-                    or "installed package is already present" in text 
-                    or "no available upgrade found" in text
-                ):
-                    success = True
-
             def next_step():
                 if success:
                     update_output(".NET 6 installed")
                     install_melonloader()
                 else:
-                    update_output(".NET 6 failed")
+                    update_output(".NET 6 installation failed. Make sure you have winget (Windows) or Protontricks (Linux)")
 
             selected_output_label.after(0, next_step)
 
