@@ -1,3 +1,7 @@
+# 2.0.1
+- Refactoring of .NET 6 Desktop Runtime installation logic (Elimination of localization-sensitive logic)
+- Added `winget` to Windows prerequisites
+
 # 2.0.0
 - Removed .ps1 and .sh scripts for .NET 6.0 Core Runtime
 - Added .NET 6.0 Desktop Runtime dedicated installation logic for Windows and Linux respectively

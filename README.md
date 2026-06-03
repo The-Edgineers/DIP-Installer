@@ -14,8 +14,9 @@ https://github.com/brothermunro/Dreadnought-Improvement-Project/releases
 
 ## Installation Walkthrough
 ### Windows
-#### Prerequisite manual actions
-1. None
+#### Prerequisites
+1. Your system must have `winget`. Open the command prompt and type in `winget`. If this returns a list of options, you are good to go.
+2. If you do not have `winget`, get it here: https://apps.microsoft.com/detail/9nblggh4nns1 (`winget` is provided by App Installer)
 
 #### Usage
 1. Double click on `DIP-Installer.exe`
@@ -28,7 +29,7 @@ https://github.com/brothermunro/Dreadnought-Improvement-Project/releases
 8. Launch UAD & Enjoy DIP
 
 ### Linux
-#### Prerequisite manual actions
+#### Prerequisites
 1. Having Protontricks installed. We recommend installing it [through Flatpak (also do the shell alias section)](https://github.com/Matoking/protontricks#flatpak-recommended)
 2. In Steam, go to Ultimate Admiral Dreadnoughts. Right click > Properties > Launch Options > insert the following: `WINEDLLOVERRIDES="version=n,b" %command%`
 3. Before running the installer, you **MUST** either set your global Steam compatibility setting to use a Proton version or specifically set UAD's compatibility setting to use one (**tested to work with Proton Experimental**). Also be sure that you have launched the game at least once prior to running this application
