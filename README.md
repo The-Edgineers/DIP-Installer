@@ -15,7 +15,11 @@ https://github.com/brothermunro/Dreadnought-Improvement-Project/releases
 ## Installation Walkthrough
 ### Windows
 #### Prerequisites
-1. Your system must have `winget`. Open the command prompt and type in `winget`. If this returns a list of options, you are good to go.
+1. Your system must have `winget`. To check that you are ready, open the command prompt and type in `winget list --id Microsoft.DotNet.DesktopRuntime.6`. 
+
+If this prompts you to accept a Microsoft transaction agreement, press Y. Then, try the command again (you can press arrow-key-up) and see if it says that it cannot find any installed package.  
+You are then good to go. IF the winget list command already returns the package, then you're good to go as well.  
+
 2. If you do not have `winget`, get it here: https://apps.microsoft.com/detail/9nblggh4nns1 (`winget` is provided by App Installer)
 
 #### Usage
